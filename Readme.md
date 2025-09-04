@@ -18,6 +18,15 @@ The script also handles logging and log cleanup.
 
 ---
 
+## Installation
+
+1. Download the latest release from [Releases](https://github.com/znanovik/Exporter_script/releases)
+2. Unzip the archive
+3. Run  `Exporter_script-Edge.bat` or `Exporter_script-Chrome.bat`
+4. Exported files will appear in `/backups`, logs in `backup_log.txt`
+
+---
+
 ## Features
 
 - Detects and processes the browser's native `Bookmarks` file as soon as it becomes available (for default profile only)
