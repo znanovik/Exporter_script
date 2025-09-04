@@ -1,0 +1,149 @@
+@startuml BookmarkBackupArchitecture
+
+title Bookmark Backup Script Architecture
+
+skinparam defaultFontName "Segoe UI"
+skinparam backgroundColor #FFFFFF
+skinparam packageStyle package
+skinparam rectangle #gray|#white
+
+legend top
+Users pre-choice of start parameters [Edge | Chrome | None | Test]
+end legend
+
+package "Initialization" {
+    :Check browser parameter;
+    :Set browser parameter (default: Edge);
+    :Check PowerShell version;
+    :Resolve project root path;
+    :Set backup and log paths;
+    :Set archive subfolder path;
+    }
+
+package "Configuration"  {
+  
+  package "Logging & Retention" {
+    :Set backup limits as ConfigLimits;
+    :Set ZIP packaging threshold as ConfigThreshold;
+    :Set max files per ZIP as ConfigMaxZip;
+    :Calculate log retention (days) as ConfigRetention;
+    :Packaging mode [ fixed name] as ZipMode;
+    }
+    
+    package WriteLog {
+      :Format timestamp as LogFormat;
+      :Append message to log file as LogAppend;
+    }     
+    package CleanLog {
+      :Read log file as LogRead;
+      :Filter entries by timestamp as LogFilter;
+      :Preserve unparsable lines as LogPreserve;
+      :Overwrite log file with filtered entries as LogOverwrite;
+      :Log cleanup summary as LogSummary;
+    }  
+    
+     
+  package "Environment Setup" {
+    :Create backups folder if missing as EnvCreateFolder;
+    :Initialize log file as EnvInitLog;
+    :Define root keys in JSON as EnvRootKeys;
+  }
+
+  package "Source Detection" {
+    :Select browser [Edge | Chrome] as SourceBrowser;
+    :Resolve path to Bookmarks file as SourcePath;
+    :Validate file existence as SourceValidate;
+    :Generate timestamp for filenames as SourceTimestamp;
+  }
+   
+  :Display configuration parameters as LogDisplay;
+
+}    
+
+package "Archiving & Packaging" {
+  package ArchiveOldFiles {
+    :Scan folder for files as ArchiveScan;
+    :Sort by LastWriteTime as ArchiveSort;
+    :Move oldest files to /archive as ArchiveMove;
+    :Log archived files as ArchiveLog;
+  }
+
+  package ZipArchivedFiles {
+    :Check file count threshold as ZipCheck;
+    :Unpack existing ZIP if present as ZipUnpack;
+    :Copy new files to temp folder as ZipCopy;
+    :Apply max file limit as ZipLimit;
+    :Compress temp folder into ZIP as ZipCompress;
+    :Log packaging actions as ZipLog;
+  }
+
+  :Packaging mode [timestamped | fixed name] as ZipMode;
+}
+
+package  "Backup & Analysis" {
+  :Copy Bookmarks file to backup location as BackupCopy;
+
+  :Parse JSON structure as BackupParse;
+  :Merge bookmarks from root folders as BackupMerge;
+
+  package CountUrlsInJson {
+    :Traverse nodes recursively as CountTraverse;
+    :Count urls, folders, total nodes as CountStats;
+  }
+
+  :Log per-root statistics as BackupLogStats;
+  :Log total bookmark count as BackupLogTotal;
+}
+
+package  "HTML Export" {
+  :Initialize HTML content as HtmlInit;
+
+  package ConvertBookmarksToHtml {
+    :Traverse nodes recursively as HtmlTraverse;
+    :Append <li> for URLs as HtmlLinks;
+    :Append nested <ul> for folders as HtmlFolders;
+  }
+
+  :Finalize HTML structure as HtmlFinalize;
+  :Save HTML file as HtmlSave;
+  :Count <a> tags as HtmlCount;
+  :Log HTML export summary as HtmlLog;
+}
+
+package  "CSV Export" {
+  :Initialize CSV data list as CsvInit;
+
+  package ConvertBookmarksForCsv {
+    :Traverse nodes recursively as CsvTraverse;
+    :Capture folder path as CsvPath;
+    :Add URL entries to CSV list as CsvAdd;
+  }
+
+  :Export CSV file as CsvExport;
+  :Log CSV export summary as CsvLog;
+}
+
+package "Markdown Export & Summary" {
+  :Initialize Markdown content as MdInit;
+  :Add statistics table as MdStats;
+
+  package ConvertBookmarksToMarkdown {
+    :Traverse nodes recursively as MdTraverse;
+    :Add numbered links as MdLinks;
+    :Add nested headings for folders as MdHeadings;
+  }
+  :Save Markdown file as MdSave;
+  :Count Markdown links as MdCount;
+  :Log Markdown export summary as MdLog;
+  
+  :Compare counts across formats [JSON, CSV, HTML, Markdown] as MdCompare;
+  :Log final summary as MdSummary;
+}
+package "Summary" {
+  :Summarize total bookmarks processed as SummaryTotal;
+  :Summarize files archived and packaged as SummaryArchive;
+  :Summarize export counts as SummaryExports;
+  :Log overall script completion as SummaryLog;
+} 
+
+@enduml

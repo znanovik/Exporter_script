@@ -1,0 +1,54 @@
+# PowerShell script artifacts
+*.ps1~
+*.psm1~
+*.psd1~
+*.log
+*.bak
+
+# Logs
+backup_log.txt
+
+# Backup and archive folders
+/backups/
+/archive/
+/*.zip
+
+# Test workspace outputs
+/tests/workspace/
+/tests/log.txt
+/tests/backups/
+/tests/**/*.json
+/tests/**/*.html
+/tests/**/*.csv
+/tests/**/*.md
+
+# Sample data (if synthetic and regenerable)
+!/tests/data/sample_bookmarks.json
+/tests/data/*.json
+
+# VS Code settings
+.vscode/
+*.code-workspace
+
+# OS-specific
+Thumbs.db
+.DS_Store
+
+# Node/npm (if used for tooling)
+node_modules/
+package-lock.json
+
+# Python (if used for testing or automation)
+__pycache__/
+*.pyc
+.env
+
+# Bat file temp
+*.bat~
+
+# Temporary and editor-generated files
+*.tmp
+*.swp
+*.bak
+*.old
+*.orig
